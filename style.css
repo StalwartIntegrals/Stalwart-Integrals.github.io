@@ -56,7 +56,7 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 1rem 0;
+  padding: 1rem 1rem; /* Added horizontal padding */
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -65,6 +65,9 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .logo {
@@ -78,6 +81,7 @@ header {
 .nav-links {
   list-style: none;
   display: flex;
+  align-items: center;
 }
 
 .nav-links li {
@@ -90,7 +94,7 @@ header {
   position: relative;
   padding: 5px 0;
   transition: color 0.3s ease;
-  text-decoration: none; /* Remove default underline */
+  text-decoration: none;
 }
 
 /* Animated underline effect for nav links */
@@ -114,11 +118,28 @@ header {
 }
 
 /* ===============================
+   Hamburger Menu Styles
+================================= */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.menu-icon .bar {
+  width: 25px;
+  height: 3px;
+  background-color: var(--nav-text);
+  margin: 4px 0;
+  transition: 0.3s;
+}
+
+/* ===============================
    Hero Section
 ================================= */
 .hero-section {
   position: relative;
-  min-height: 100vh; /* Changed from height: 100vh */
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,7 +211,6 @@ header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Subtle click (active) effect */
 .btn:active {
   transform: scale(0.97);
 }
@@ -288,42 +308,27 @@ header {
 
 .service-card-wide {
   width: 100%;
-  max-width: 700px; /* Instead of fixed 700px */
+  max-width: 700px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: 2rem;
   transition: var(--base-transition);
   text-align: center;
+  overflow: hidden; /* Ensure no internal overflow */
 }
 
-.service-card-wide:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.service-card-wide h3 {
-  font-family: var(--font-heading);
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-}
-
-.service-card-wide p {
-  font-size: 1rem;
-  color: var(--text-color);
-  margin-bottom: 1rem;
-}
-
-/* Sub-Services in Surveillance Card */
+/* ---- Surveillance Card Sub-Services Adjustments ---- */
 .sub-services {
   margin-top: 1rem;
   display: flex;
+  flex-wrap: wrap;  /* Allow wrapping of sub-cards */
   gap: 1rem;
+  justify-content: center;
 }
 
 .sub-service {
-  flex: 1;
+  flex: 1 1 300px; /* Allow sub-cards to shrink and grow */
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 8px;
@@ -370,6 +375,8 @@ header {
 
 .contact-section a {
   color: var(--primary-color);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* ===============================
@@ -441,43 +448,29 @@ header {
     font-size: 2.8rem;
   }
   .nav-links li {
-    margin-left: 1rem;
+    margin-left: 0;
+    margin: 1rem 0;
   }
   .about-content {
     flex-direction: column;
+    align-items: center;
   }
-}
-
-/* Further reduce hero text for very small screens */
-@media (max-width: 480px) {
-  .hero-content h1 {
-    font-size: 2rem;
+  .service-card {
+    width: 90%;
+    max-width: 350px;
+    margin: 0 auto;
   }
-}
-
-/* ===============================
-   Hamburger Menu Styles
-================================= */
-.menu-icon {
-  display: none;
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.menu-icon .bar {
-  width: 25px;
-  height: 3px;
-  background-color: var(--nav-text);
-  margin: 4px 0;
-  transition: 0.3s;
-}
-
-/* Show hamburger on mobile, hide horizontal nav */
-@media (max-width: 768px) {
+  .service-card-wide {
+    width: 90%;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  /* Navbar adjustments for tablets and below */
   .menu-icon {
     display: flex;
   }
-
+  
   .nav-links {
     position: absolute;
     top: 70px; /* approximate header height */
@@ -490,13 +483,40 @@ header {
     overflow: hidden;
     transition: max-height 0.3s ease;
   }
-
-  /* Expand the menu when .show is toggled by JS */
+  
+  /* Expand nav when .show is toggled via JS */
   .nav-links.show {
-    max-height: 300px; /* Enough space to show all nav items */
+    max-height: 300px;
   }
+}
 
-  .nav-links li {
-    margin: 1rem 0;
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .nav-links a {
+    font-size: 1.1rem;
+    padding: 8px 0;
+  }
+  .logo {
+    font-size: 1.5rem;
+  }
+  .section h2 {
+    font-size: 2rem;
+  }
+  .service-card,
+  .service-card-wide {
+    width: 95%;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  .btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* On very small screens, stack sub-services vertically */
+  .sub-service {
+    flex: 1 1 100%;
   }
 }
