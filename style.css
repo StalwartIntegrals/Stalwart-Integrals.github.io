@@ -118,7 +118,7 @@ header {
 ================================= */
 .hero-section {
   position: relative;
-  height: 100vh;
+  min-height: 100vh; /* Changed from height: 100vh */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -190,7 +190,7 @@ header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Add a subtle click (active) effect */
+/* Subtle click (active) effect */
 .btn:active {
   transform: scale(0.97);
 }
@@ -251,15 +251,10 @@ header {
    Services / Products Section
 ================================= */
 .services-grid {
-  /* display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  padding: 0 1rem; */
-
   display: flex;
-  flex-wrap: wrap;     /* Allow items to wrap to the next line */
-  justify-content: center; /* Center items horizontally */
-  gap: 2rem;           /* Spacing between cards */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
   padding: 0 1rem;
 }
 
@@ -270,7 +265,7 @@ header {
   border-radius: 12px;
   padding: 2rem;
   transition: var(--base-transition);
-  text-align: center; /* This centers all text within the card */
+  text-align: center;
 }
 
 .service-card:hover {
@@ -292,13 +287,14 @@ header {
 }
 
 .service-card-wide {
-  width: 700px;
+  width: 100%;
+  max-width: 700px; /* Instead of fixed 700px */
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
   padding: 2rem;
   transition: var(--base-transition);
-  text-align: center; /* This centers all text within the card */
+  text-align: center;
 }
 
 .service-card-wide:hover {
@@ -374,8 +370,6 @@ header {
 
 .contact-section a {
   color: var(--primary-color);
-  /* Uncomment below to remove default underline */
-  /* text-decoration: none; */
 }
 
 /* ===============================
@@ -454,22 +448,55 @@ header {
   }
 }
 
-@media (max-width: 600px) {
-  .sub-services {
-    flex-direction: column;
+/* Further reduce hero text for very small screens */
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 2rem;
   }
 }
 
-/* Apply a 600px min-width on larger screens */
-/* @media (min-width: 768px) {
-  .service-card-wide {
-    min-width: 600px;
-  }
-} */
+/* ===============================
+   Hamburger Menu Styles
+================================= */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
 
-/* On smaller screens, allow the card to take full available width */
-/* @media (max-width: 767px) {
-  .service-card-wide {
-    min-width: 100%;
+.menu-icon .bar {
+  width: 25px;
+  height: 3px;
+  background-color: var(--nav-text);
+  margin: 4px 0;
+  transition: 0.3s;
+}
+
+/* Show hamburger on mobile, hide horizontal nav */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: flex;
   }
-} */
+
+  .nav-links {
+    position: absolute;
+    top: 70px; /* approximate header height */
+    right: 0;
+    background: var(--header-bg);
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    max-height: 0;      /* Collapsed by default */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  /* Expand the menu when .show is toggled by JS */
+  .nav-links.show {
+    max-height: 300px; /* Enough space to show all nav items */
+  }
+
+  .nav-links li {
+    margin: 1rem 0;
+  }
+}
