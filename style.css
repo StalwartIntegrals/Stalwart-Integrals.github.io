@@ -1,0 +1,475 @@
+/* ===============================
+   Global Scroll Behavior
+================================= */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===============================
+   CSS Reset & Global Settings
+================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Dark Grey & Green Theme Palette */
+  --primary-color: #4caf50;       /* Subtle Green */
+  --primary-hover: #43a047;       /* Darker Green on hover */
+  --secondary-color: #8bc34a;     /* Light Green Accent */
+  --background-color: #212121;    /* Dark Grey Background */
+  --text-color: #e0e0e0;          /* Light Grey Text */
+  --header-bg: #303030;           /* Dark Grey Header */
+  --card-bg: #424242;             /* Dark Card Background */
+  --card-border: #616161;         /* Lighter Grey Border */
+  --nav-text: #e0e0e0;            /* Navigation Text */
+  --nav-hover: var(--primary-color);
+  
+  /* Typography & Transitions */
+  --font-heading: 'Anonymous Pro', monospace;
+  --font-body: 'Source Code Pro', monospace;
+  --base-transition: all 0.3s ease;
+  --heading-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  overflow-x: hidden;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===============================
+   Header & Navigation
+================================= */
+header {
+  background: var(--header-bg);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1rem 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: var(--font-heading);
+  color: var(--nav-text);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+}
+
+.nav-links li {
+  margin-left: 2rem;
+}
+
+.nav-links a {
+  color: var(--nav-text);
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.3s ease;
+  text-decoration: none; /* Remove default underline */
+}
+
+/* Animated underline effect for nav links */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--nav-hover);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* ===============================
+   Hero Section
+================================= */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 60px; /* Avoid overlap with fixed header */
+  color: #fff;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://via.placeholder.com/1920x1080') center/cover no-repeat;
+  filter: brightness(0.5);
+  z-index: -3;
+}
+
+.hero-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  opacity: 0.3;
+  z-index: -2;
+}
+
+.hero-content {
+  position: relative;
+  animation: fadeInDown 1s ease;
+}
+
+.hero-content h1 {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-shadow: var(--heading-shadow);
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--base-transition);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Add a subtle click (active) effect */
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* ===============================
+   Section Base Styles
+================================= */
+.section {
+  padding: 80px 0;
+  position: relative;
+}
+
+.section h2 {
+  font-family: var(--font-heading);
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.section h2::after {
+  content: "";
+  width: 60px;
+  height: 4px;
+  background: var(--primary-color);
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  gap: 2rem;
+}
+
+.about-text {
+  flex: 1 1 50%;
+}
+
+.about-image {
+  flex: 1 1 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-image img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* ===============================
+   Services / Products Section
+================================= */
+.services-grid {
+  /* display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem; */
+
+  display: flex;
+  flex-wrap: wrap;     /* Allow items to wrap to the next line */
+  justify-content: center; /* Center items horizontally */
+  gap: 2rem;           /* Spacing between cards */
+  padding: 0 1rem;
+}
+
+.service-card {
+  width: 350px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 2rem;
+  transition: var(--base-transition);
+  text-align: center; /* This centers all text within the card */
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.service-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.service-card-wide {
+  width: 700px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 2rem;
+  transition: var(--base-transition);
+  text-align: center; /* This centers all text within the card */
+}
+
+.service-card-wide:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.service-card-wide h3 {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.service-card-wide p {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+/* Sub-Services in Surveillance Card */
+.sub-services {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.sub-service {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: var(--base-transition);
+}
+
+.sub-service:hover {
+  transform: translateX(5px);
+}
+
+.sub-service h4 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* ===============================
+   Contact Section
+================================= */
+.contact-section {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.contact-section h2 {
+  margin-bottom: 20px;
+  font-family: var(--font-heading);
+}
+
+.contact-section p {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  position: relative;
+}
+
+/* Adding an envelope emoticon before contact text */
+.contact-section p::before {
+  content: "📧 ";
+  margin-right: 0.5rem;
+}
+
+.contact-section a {
+  color: var(--primary-color);
+  /* Uncomment below to remove default underline */
+  /* text-decoration: none; */
+}
+
+/* ===============================
+   Footer
+================================= */
+.footer {
+  background: var(--header-bg);
+  color: #ccc;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ===============================
+   Animations
+================================= */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   Scroll Animation Classes
+================================= */
+/* Fade-up effect */
+.scroll-fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-fade-up.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide in from left */
+.scroll-slide-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-slide-in-left.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide in from right */
+.scroll-slide-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-slide-in-right.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===============================
+   Responsive Styles
+================================= */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.8rem;
+  }
+  .nav-links li {
+    margin-left: 1rem;
+  }
+  .about-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .sub-services {
+    flex-direction: column;
+  }
+}
+
+/* Apply a 600px min-width on larger screens */
+/* @media (min-width: 768px) {
+  .service-card-wide {
+    min-width: 600px;
+  }
+} */
+
+/* On smaller screens, allow the card to take full available width */
+/* @media (max-width: 767px) {
+  .service-card-wide {
+    min-width: 100%;
+  }
+} */
