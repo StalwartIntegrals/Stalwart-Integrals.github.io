@@ -2,13 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stalwart Integrals</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
   <!-- External CSS -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,700;1,700&amp;family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700">
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,700;1,700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700"
+  >
 </head>
 
 <body>
@@ -17,8 +24,17 @@
   <header>
     <div class="container header-container">
       <div class="logo">STALWART INTEGRALS</div>
+
+      <!-- Hamburger Icon -->
+      <div class="menu-icon" onclick="toggleMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+
       <nav>
-        <ul class="nav-links">
+        <!-- Add an ID to the nav-links so we can toggle it in JavaScript -->
+        <ul class="nav-links" id="navLinks">
           <li><a href="#hero">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#services">Products</a></li>
@@ -43,7 +59,7 @@
     <div class="container" style="text-align: center;">
       <h2>ABOUT US</h2>
       <p>
-        Stalwart Integrals is an AI agent-driven product and research company devoted to innovating in the realms of robotics, gaming, finance, and more. Our mission is to build intelligent, scalable solutions that reshape industries and empower people to achive their goals.
+        Stalwart Integrals is an AI agent-driven product and research company devoted to innovating in the realms of robotics, gaming, finance, and more. Our mission is to build intelligent, scalable solutions that reshape industries and empower people to achieve their goals.
       </p>
     </div>
   </section>
@@ -110,5 +126,13 @@
       <p>&copy; 2025 Stalwart Integrals. All rights reserved.</p>
     </div>
   </footer>
+
+  <!-- Simple JS for Toggling the Menu on Mobile -->
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById("navLinks");
+      navLinks.classList.toggle("show");
+    }
+  </script>
 </body>
 </html>
