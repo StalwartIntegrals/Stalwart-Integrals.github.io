@@ -6,143 +6,278 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stalwart Integrals</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- External CSS -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" type="text/css"
-    href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,700;1,700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Extend Tailwind to know about our Exo 2 font
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            exo: ['"Exo 2"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Three.js for cosmic background -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+  <style>
+    body {
+      background: #0a0a0a;
+      overflow-x: hidden;
+    }
+
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cosmic-glow {
+      /* box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); */
+      text-shadow:
+        0 0 8px rgba(59, 130, 246, 0.8),
+        0 0 16px rgba(59, 130, 246, 0.6);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(to right, #3b82f6, #a5b4fc);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .card-hover {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-cosmic {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(45deg, #3b82f6, #a5b4fc);
+    }
+
+    .btn-cosmic::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: 0.5s;
+    }
+
+    .btn-cosmic:hover::before {
+      left: 100%;
+    }
+
+    /* keep initial hidden state */
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+  </style>
 </head>
 
-<body>
-  <!-- Header / Navigation -->
-  <header>
-    <div class="container header-container">
-      <div class="logo">STALWART INTEGRALS</div>
+<body class="font-exo text-gray-100">
 
-      <!-- Hamburger Icon -->
-      <div class="menu-icon" onclick="toggleMenu()">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
+  <!-- Cosmic Background (behind everything) -->
+  <div id="cosmicBackground" class="absolute inset-0 -z-10"></div>
 
-      <nav>
-        <!-- Add an ID to the nav-links so we can toggle it in JavaScript -->
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Products</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+  <!-- Header -->
+  <header class="fixed top-0 w-full glassmorphism z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-3xl font-bold text-blue-400">STALWART INTEGRALS</div>
+      <button id="menuToggle" class="md:hidden text-gray-100 focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+      <nav class="hidden md:flex space-x-12">
+        <a href="#hero" class="nav-link text-gray-300 hover:text-blue-400">Home</a>
+        <a href="#about" class="nav-link text-gray-300 hover:text-blue-400">About</a>
+        <a href="#innovations" class="nav-link text-gray-300 hover:text-blue-400">Innovations</a>
+        <a href="#contact" class="nav-link text-gray-300 hover:text-blue-400">Contact</a>
       </nav>
+      <div id="mobileMenu"
+        class="hidden md:hidden absolute top-16 left-0 w-full glassmorphism flex flex-col items-center space-y-6 py-8">
+        <a href="#hero" class="text-gray-300 hover:text-blue-400">Home</a>
+        <a href="#about" class="text-gray-300 hover:text-blue-400">About</a>
+        <a href="#innovations" class="text-gray-300 hover:text-blue-400">Innovations</a>
+        <a href="#contact" class="text-gray-300 hover:text-blue-400">Contact</a>
+      </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section id="hero" class="hero-section">
-    <div class="hero-bg"></div>
-    <div class="hero-content container">
-      <h1>INNOVATING WITH FRONTIER Δi</h1>
-      <p>AI’s potential is vast, but many struggle to integrate it effectively. We bridge that gap, transforming possibilities into tangible impact.</p>
-      <a href="#services" class="btn btn-primary">Explore Verticals</a>
+  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6 relative z-10">
+    <div class="container mx-auto reveal">
+      <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-tight text-blue-300 cosmic-glow">
+        INNOVATING WITH FRONTIER Δi
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-4xl mx-auto">
+        AI’s potential is vast, but many struggle to integrate it effectively. We bridge that gap, transforming
+        possibilities into tangible impact.
+      </p>
+      <a href="#innovations"
+        class="btn-cosmic inline-block text-white px-10 py-4 rounded-full font-semibold text-lg cosmic-glow">Explore Our
+        Work</a>
     </div>
   </section>
 
   <!-- About Section -->
-  <section id="about" class="about-section section">
-    <div class="container" style="text-align: center;">
-      <h2>ABOUT US</h2>
-      <p>
-        Stalwart Integrals is an AI agent-driven product and research company devoted to innovating in the realms of
-        robotics, gaming, finance, and more. Our mission is to build intelligent, scalable solutions that reshape
-        industries and empower people to achieve their goals.
+  <section id="about" class="py-32 px-6 relative">
+    <div class="container mx-auto reveal">
+      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-10 text-center">Our Mission</h2>
+      <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto text-center">
+        Stalwart Integrals pioneers AI-driven innovation in robotics, gaming, finance, and beyond. We craft intelligent,
+        scalable solutions to reshape industries and empower humanity’s ambitions.
       </p>
     </div>
   </section>
 
-  <!-- Services / Products Section -->
-  <section id="services" class="services-section section">
-    <div class="container">
-      <h2>OUR INNOVATIONS</h2>
-      <div class="services-grid">
-        <!-- Education Vertical -->
-        <div class="service-card">
-          <h3>EDUCATION</h3>
-          <div class="sub-service">
-            <h4>WOKMAT</h4>
-            <p>
-              AI agent driven platform enabling students and professionals to evaluate and elevate their skills to
-              meet industry standards.
-            </p>
-          </div>
+  <!-- Innovations Section -->
+  <section id="innovations" class="py-32 px-6 bg-black/30 relative z-10">
+    <div class="container mx-auto">
+      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-12 text-center">Our Innovations</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">Education: WOKMAT</h3>
+          <p class="text-gray-400">
+            An AI-driven platform empowering students and professionals to assess and enhance their skills, aligning
+            with industry benchmarks.
+          </p>
         </div>
-        <!-- Finance Vertical -->
-        <div class="service-card">
-          <h3>FINANCE</h3>
-          <div class="sub-service">
-            <h4>FRONTLINE</h4>
-            <p>
-              AI recommendation engine that identifies optimal trading strategies to consistently generate profits
-              through
-              data-driven market analysis.
-            </p>
-          </div>
+        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">Finance: FRONTLINE</h3>
+          <p class="text-gray-400">
+            An AI recommendation engine delivering optimal trading strategies for consistent profits via data-driven
+            market insights.
+          </p>
         </div>
-        <!-- Agriculture Vertical -->
-        <div class="service-card">
-          <h3>AGRICULTURE</h3>
-          <div class="sub-service">
-            <h4>EARTH</h4>
-            <p>
-              Automated robotic farm ecosystem employs AI agents for plant monitoring and analytics, ensuring
-              sustainable
-              crop management.
-            </p>
-          </div>
+        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">Agriculture: EARTH</h3>
+          <p class="text-gray-400">
+            A robotic farm ecosystem with AI agents for plant monitoring and analytics, ensuring sustainable crop
+            management.
+          </p>
         </div>
-        <!-- Surveillance Vertical (remains unchanged) -->
-        <div class="service-card-wide">
-          <h3>SURVEILLANCE</h3>
-          <p>Advanced AI solutions for surveillance</p>
-          <div class="sub-services">
-            <div class="sub-service">
-              <h4>SECURITY</h4>
-              <p>Facial recognition, tracking, object detection, biometrics, and predictive analytics.</p>
-            </div>
-            <div class="sub-service">
-              <h4>MONITORING</h4>
-              <p>3D printing anomaly detection, notification, and intelligent inventory management.</p>
-            </div>
-          </div>
+        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">Surveillance: Security</h3>
+          <p class="text-gray-400">
+            Advanced AI for facial recognition, tracking, object detection, biometrics, and predictive analytics.
+          </p>
+        </div>
+        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+          <h3 class="text-2xl font-bold text-blue-400 mb-4">Surveillance: Monitoring</h3>
+          <p class="text-gray-400">
+            AI-driven anomaly detection for 3D printing, notifications, and intelligent inventory management.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Contact Section -->
-  <section id="contact" class="contact-section section">
-    <div class="container">
-      <h2>GET IN TOUCH</h2>
-      <p>
-        For inquiries or collaborations, reach out to us at
-        <a href="mailto:divyanshjuneja@stalwartintegrals.com">divyanshjuneja@stalwartintegrals.com</a>
+  <section id="contact" class="py-32 px-6 relative z-10">
+    <div class="container mx-auto text-center reveal">
+      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-10">Connect With Us</h2>
+      <p class="text-lg md:text-xl text-gray-400">
+        For inquiries or collaborations, contact us at
+        <a href="mailto:divyanshjuneja@stalwartintegrals.com"
+          class="text-blue-400 hover:underline">divyanshjuneja@stalwartintegrals.com</a>
       </p>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 Stalwart Integrals. All rights reserved.</p>
-    </div>
+  <footer class="bg-black/50 py-10 text-center">
+    <p class="text-gray-500">© 2025 Stalwart Integrals. All rights reserved.</p>
   </footer>
 
-  <!-- Simple JS for Toggling the Menu on Mobile -->
   <script>
-    function toggleMenu() {
-      const navLinks = document.getElementById("navLinks");
-      navLinks.classList.toggle("show");
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // GSAP fromTo reveal
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reset'
+          }
+        }
+      );
+    });
+
+    // Three.js Cosmic Background
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('cosmicBackground').appendChild(renderer.domElement);
+
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 5000;
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 2000;
     }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 2, transparent: true, opacity: 0.8 });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    camera.position.z = 1000;
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.y += 0.0002;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 
