@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Extend Tailwind to know about our Exo 2 font
+    // Extend Tailwind to know about our Exo 2 font
     tailwind.config = {
       theme: {
         extend: {
@@ -28,6 +28,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
   <style>
+    /* Enable smooth in-page scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background: #0a0a0a;
       overflow-x: hidden;
@@ -40,7 +45,6 @@
     }
 
     .cosmic-glow {
-      /* box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); */
       text-shadow:
         0 0 8px rgba(59, 130, 246, 0.8),
         0 0 16px rgba(59, 130, 246, 0.6);
@@ -166,20 +170,30 @@
     <div class="container mx-auto">
       <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-12 text-center">Our Innovations</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-          <h3 class="text-2xl font-bold text-blue-400 mb-4">Education: WOKMAT</h3>
-          <p class="text-gray-400">
-            An AI-driven platform empowering students and professionals to assess and enhance their skills, aligning
-            with industry benchmarks.
-          </p>
-        </div>
-        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-          <h3 class="text-2xl font-bold text-blue-400 mb-4">Finance: SPACETIME²</h3>
-          <p class="text-gray-400">
-            An AI recommendation engine delivering optimal trading strategies for consistent profits via data-driven
-            market insights.
-          </p>
-        </div>
+        
+        <!-- Education: WOKMAT -->
+        <a href="https://wokmat.com" class="block" target="_blank" rel="noopener noreferrer">
+          <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+            <h3 class="text-2xl font-bold text-blue-400 mb-4">Education: WOKMAT</h3>
+            <p class="text-gray-400">
+              An AI-driven platform empowering students and professionals to assess and enhance their skills, aligning
+              with industry benchmarks.
+            </p>
+          </div>
+        </a>
+
+        <!-- Finance: SPACETIME² -->
+        <a href="https://www.stalwartintegrals.com/spacetime2" class="block" target="_blank" rel="noopener noreferrer">
+          <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
+            <h3 class="text-2xl font-bold text-blue-400 mb-4">Finance: SPACETIME²</h3>
+            <p class="text-gray-400">
+              An AI recommendation engine delivering optimal trading strategies for consistent profits via data-driven
+              market insights.
+            </p>
+          </div>
+        </a>
+
+        <!-- Other Innovations -->
         <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
           <h3 class="text-2xl font-bold text-blue-400 mb-4">Agriculture: EARTH</h3>
           <p class="text-gray-400">
@@ -199,6 +213,7 @@
             AI-driven anomaly detection for 3D printing, notifications, and intelligent inventory management.
           </p>
         </div>
+
       </div>
     </div>
   </section>
