@@ -5,212 +5,375 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stalwart Integrals</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
-  <!-- Tailwind CSS CDN -->
+
+  <!-- Fonts: Outfit for modern, geometric look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Extend Tailwind to know about our Exo 2 font
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            exo: ['"Exo 2"', 'sans-serif'],
+            sans: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            // "Void" palette
+            space: {
+              900: '#050510', // Deepest background
+              800: '#0a0a1a', // Section background
+              700: '#151525', // Card background
+            },
+            // "Nebula" accents
+            nebula: {
+              glow: '#4cc9f0', // Cyan/Electric Blue
+              core: '#4361ee', // Deep Blue
+              soft: '#7209b7', // Purple/Pink hint
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
           }
         }
       }
     }
   </script>
-  <!-- GSAP & ScrollTrigger -->
+
+  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  <!-- Three.js for cosmic background -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
   <style>
-    /* Enable smooth in-page scrolling */
-    html {
-      scroll-behavior: smooth;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #050510;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4cc9f0;
     }
 
     body {
-      background: #0a0a0a;
+      background-color: #050510;
+      color: #e2e8f0;
       overflow-x: hidden;
     }
 
-    .glassmorphism {
+    /* Refined Glassmorphism */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-glass {
+      background: rgba(5, 5, 16, 0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    /* Typography Utilities */
+    .text-gradient {
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .text-glow {
+      text-shadow: 0 0 20px rgba(76, 201, 240, 0.3);
+    }
+
+    /* Interactive Elements */
+    .hover-lift {
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(67, 97, 238, 0.2);
+      border-color: rgba(76, 201, 240, 0.3);
+    }
+
+    /* Button Styles */
+    .btn-primary {
+      position: relative;
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .cosmic-glow {
-      text-shadow:
-        0 0 8px rgba(59, 130, 246, 0.8),
-        0 0 16px rgba(59, 130, 246, 0.6);
-    }
-
-    .nav-link {
-      position: relative;
-      transition: color 0.3s ease;
-    }
-
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(to right, #3b82f6, #a5b4fc);
-      transition: width 0.3s ease;
-    }
-
-    .nav-link:hover::after {
-      width: 100%;
-    }
-
-    .card-hover {
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-
-    .card-hover:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn-cosmic {
-      position: relative;
       overflow: hidden;
-      background: linear-gradient(45deg, #3b82f6, #a5b4fc);
+      transition: all 0.3s ease;
     }
 
-    .btn-cosmic::before {
+    .btn-primary::before {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
       transition: 0.5s;
     }
 
-    .btn-cosmic:hover::before {
+    .btn-primary:hover::before {
       left: 100%;
     }
 
-    /* keep initial hidden state */
-    .reveal {
-      opacity: 0;
-      transform: translateY(50px);
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(76, 201, 240, 0.4);
+      box-shadow: 0 0 15px rgba(76, 201, 240, 0.2);
+    }
+
+    /* Section Spacing */
+    .section-spacing {
+      padding-top: 8rem;
+      padding-bottom: 8rem;
     }
   </style>
 </head>
 
-<body class="font-exo text-gray-100">
+<body class="antialiased selection:bg-nebula-core selection:text-white">
 
-  <!-- Cosmic Background (behind everything) -->
-  <div id="cosmicBackground" class="absolute inset-0 -z-10"></div>
+  <!-- Background Canvas -->
+  <canvas id="starfield" class="fixed top-0 left-0 w-full h-full -z-10 opacity-60"></canvas>
 
-  <!-- Header -->
-  <header class="fixed top-0 w-full glassmorphism z-50">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="text-3xl font-bold text-blue-400">STALWART INTEGRALS</div>
-      <button id="menuToggle" class="md:hidden text-gray-100 focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
-      </button>
-      <nav class="hidden md:flex space-x-12">
-        <a href="#hero" class="nav-link text-gray-300 hover:text-blue-400">Home</a>
-        <a href="#about" class="nav-link text-gray-300 hover:text-blue-400">About</a>
-        <a href="#innovations" class="nav-link text-gray-300 hover:text-blue-400">Innovations</a>
-        <a href="#contact" class="nav-link text-gray-300 hover:text-blue-400">Contact</a>
-      </nav>
-      <div id="mobileMenu"
-        class="hidden md:hidden absolute top-16 left-0 w-full glassmorphism flex flex-col items-center space-y-6 py-8">
-        <a href="#hero" class="text-gray-300 hover:text-blue-400">Home</a>
-        <a href="#about" class="text-gray-300 hover:text-blue-400">About</a>
-        <a href="#innovations" class="text-gray-300 hover:text-blue-400">Innovations</a>
-        <a href="#contact" class="text-gray-300 hover:text-blue-400">Contact</a>
+  <!-- Navigation -->
+  <nav class="fixed w-full z-50 nav-glass transition-all duration-300" id="navbar">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="#" class="text-xl font-bold tracking-wider text-white">
+          STALWART <span class="font-light text-nebula-glow">INTEGRALS</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-12">
+          <a href="#hero" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Home</a>
+          <a href="#about" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Mission</a>
+          <a href="#innovations"
+            class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Innovations</a>
+          <a href="#contact"
+            class="px-5 py-2 rounded-full border border-white/10 text-sm font-medium text-white hover:bg-white/5 transition-all">Contact</a>
+        </div>
+
+        <!-- Mobile Button -->
+        <button id="mobileMenuBtn" class="md:hidden text-gray-300 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
       </div>
     </div>
-  </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden glass-panel border-t-0 absolute w-full left-0">
+      <div class="px-6 py-8 space-y-4 flex flex-col items-center">
+        <a href="#hero" class="text-lg text-gray-300 hover:text-white">Home</a>
+        <a href="#about" class="text-lg text-gray-300 hover:text-white">Mission</a>
+        <a href="#innovations" class="text-lg text-gray-300 hover:text-white">Innovations</a>
+        <a href="#contact" class="text-lg text-nebula-glow">Contact Us</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Hero Section -->
-  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6 relative z-10">
-    <div class="container mx-auto reveal">
-      <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-tight text-blue-300 cosmic-glow">
-        INNOVATING WITH FRONTIER Δi
-      </h1>
-      <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-4xl mx-auto">
-        AI’s potential is vast, but many struggle to integrate it effectively. We bridge that gap, transforming
-        possibilities into tangible impact.
-      </p>
-      <a href="#innovations"
-        class="btn-cosmic inline-block text-white px-10 py-4 rounded-full font-semibold text-lg cosmic-glow">Explore Our
-        Work</a>
+  <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <!-- Ambient Glow -->
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-nebula-core/10 rounded-full blur-[100px] -z-10 pointer-events-none">
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 text-center z-10">
+      <div class="opacity-0 translate-y-8 animate-reveal">
+        <span
+          class="inline-block py-1 px-3 rounded-full bg-white/5 border border-white/10 text-xs font-medium tracking-wide text-nebula-glow mb-6">
+          Architecting Intelligence
+        </span>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-tight">
+          <span class="text-gradient">Innovating with</span><br>
+          <span class="text-white text-glow">Frontier Δi</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+          Stalwart Integrals bridges the gap between potential and reality. We transform advanced AI capabilities into
+          tangible, high-impact solutions for the modern world.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <a href="#innovations"
+            class="btn-primary px-8 py-4 rounded-full text-white font-medium tracking-wide min-w-[160px]">
+            Explore Work
+          </a>
+          <a href="#about" class="text-gray-400 hover:text-white flex items-center gap-2 transition-colors group">
+            <span>Learn our mission</span>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
     </div>
   </section>
 
   <!-- About Section -->
-  <section id="about" class="py-32 px-6 relative">
-    <div class="container mx-auto reveal">
-      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-10 text-center">Our Mission</h2>
-      <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto text-center">
-        Stalwart Integrals pioneers AI-driven innovation in robotics, gaming, finance, and beyond. We craft intelligent,
-        scalable solutions to reshape industries and empower humanity’s ambitions.
+  <section id="about" class="section-spacing relative">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-12 text-white reveal-text">Our Mission</h2>
+      <p class="text-xl md:text-2xl text-gray-300 font-light leading-relaxed reveal-text">
+        We pioneer AI-driven innovation across <span class="text-nebula-glow">robotics, finance, and
+          surveillance</span>.
+        Our goal is not just to build software, but to craft intelligent ecosystems that empower humanity's boldest
+        ambitions.
       </p>
     </div>
   </section>
 
   <!-- Innovations Section -->
-  <section id="innovations" class="py-32 px-6 bg-black/30 relative z-10">
-    <div class="container mx-auto">
-      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-12 text-center">Our Innovations</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        
-        <!-- Education: WOKMAT -->
-        <a href="https://wokmat.com" class="block" target="_blank" rel="noopener noreferrer">
-          <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-            <h3 class="text-2xl font-bold text-blue-400 mb-4">Education: WOKMAT</h3>
-            <p class="text-gray-400">
-              An AI-driven platform empowering students and professionals to assess and enhance their skills, aligning
-              with industry benchmarks.
-            </p>
+  <section id="innovations" class="section-spacing relative bg-space-800/30">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20">
+        <h2 class="text-3xl md:text-5xl font-bold mb-6 reveal-text">Core Innovations</h2>
+        <p class="text-gray-400 max-w-xl mx-auto reveal-text">Redefining industries through specialized autonomous
+          agents.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- WOKMAT -->
+        <a href="wokmat/index.html" class="block group reveal-card">
+          <div class="glass-panel p-8 rounded-3xl h-full hover-lift flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6 text-blue-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-semibold text-white mb-3 group-hover:text-nebula-glow transition-colors">WOKMAT
+              </h3>
+              <p class="text-gray-400 leading-relaxed text-sm">
+                AI-driven educational platform for skills assessment. Closing the gap between academic learning and
+                industry benchmarks.
+              </p>
+            </div>
+            <div class="mt-8 flex items-center text-sm font-medium text-blue-400/80 group-hover:text-blue-400">
+              Visit Platform <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </div>
           </div>
         </a>
 
-        <!-- Finance: SPACETIME² -->
-        <a href="https://www.stalwartintegrals.com/spacetime2" class="block" target="_blank" rel="noopener noreferrer">
-          <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-            <h3 class="text-2xl font-bold text-blue-400 mb-4">Finance: SPACETIME²</h3>
-            <p class="text-gray-400">
-              An AI recommendation engine delivering optimal trading strategies for consistent profits via data-driven
-              market insights.
-            </p>
+        <!-- SPACETIME2 -->
+        <a href="spacetime2/index.html" class="block group reveal-card">
+          <div class="glass-panel p-8 rounded-3xl h-full hover-lift flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6 text-purple-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-semibold text-white mb-3 group-hover:text-nebula-soft transition-colors">
+                SPACETIME²</h3>
+              <p class="text-gray-400 leading-relaxed text-sm">
+                Advanced financial engine delivering optimal trading strategies via deep learning and market analytics.
+              </p>
+            </div>
+            <div class="mt-8 flex items-center text-sm font-medium text-purple-400/80 group-hover:text-purple-400">
+              View Strategies <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </div>
           </div>
         </a>
 
-        <!-- Other Innovations -->
-        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-          <h3 class="text-2xl font-bold text-blue-400 mb-4">Agriculture: EARTH</h3>
-          <p class="text-gray-400">
-            A robotic farm ecosystem with AI agents for plant monitoring and analytics, ensuring sustainable crop
-            management.
+        <!-- EARTH -->
+        <div class="glass-panel p-8 rounded-3xl h-full hover-lift reveal-card">
+          <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-6 text-green-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 01-1.161.886l-.143.048a1.107 1.107 0 00-.57 1.664c.369.555.169 1.307-.227 1.612l-1.002.573a4.001 4.001 0 01-3.992 0l-1.002-.573c-.396-.305-.596-1.057-.227-1.612a1.107 1.107 0 00-.57-1.664l-.143-.048a2.25 2.25 0 01-1.161-.886l-.51-.766a1.125 1.125 0 01.216-1.49l1.068-.89a1.125 1.125 0 00.405-.864v-.568a1.125 1.125 0 00-2.25 0v.568c0 .657-.275 1.258-.724 1.706l-1.068.89A2.25 2.25 0 002.25 7.152v6.61a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25v-6.61a2.25 2.25 0 00-.913-1.802l-1.068-.89a2.25 2.25 0 00-.724-1.706v-.568a1.125 1.125 0 00-2.25 0z">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold text-white mb-3">EARTH</h3>
+          <p class="text-gray-400 leading-relaxed text-sm">
+            Robotic farm ecosystem. Autonomous agents for plant monitoring, analytics, and sustainable precision
+            agriculture.
           </p>
         </div>
-        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-          <h3 class="text-2xl font-bold text-blue-400 mb-4">Surveillance: Security</h3>
-          <p class="text-gray-400">
-            Advanced AI for facial recognition, tracking, object detection, biometrics, and predictive analytics.
+
+        <!-- Security -->
+        <div class="glass-panel p-8 rounded-3xl h-full hover-lift reveal-card">
+          <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-6 text-red-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z">
+              </path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold text-white mb-3">Vision AI</h3>
+          <p class="text-gray-400 leading-relaxed text-sm">
+            State-of-the-art computer vision for facial recognition, object tracking, and secure biometric
+            authentication.
           </p>
         </div>
-        <div class="glassmorphism p-8 rounded-2xl card-hover reveal">
-          <h3 class="text-2xl font-bold text-blue-400 mb-4">Surveillance: Monitoring</h3>
-          <p class="text-gray-400">
-            AI-driven anomaly detection for 3D printing, notifications, and intelligent inventory management.
+
+        <!-- Monitoring -->
+        <div class="glass-panel p-8 rounded-3xl h-full hover-lift reveal-card">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6 text-amber-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold text-white mb-3">Smart Monitoring</h3>
+          <p class="text-gray-400 leading-relaxed text-sm">
+            Real-time anomaly detection for additive manufacturing and intelligent inventory management systems.
           </p>
         </div>
 
@@ -218,72 +381,163 @@
     </div>
   </section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="py-32 px-6 relative z-10">
-    <div class="container mx-auto text-center reveal">
-      <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-10">Connect With Us</h2>
-      <p class="text-lg md:text-xl text-gray-400">
-        For inquiries or collaborations, contact us at
-        <a href="mailto:divyanshjuneja@stalwartintegrals.com"
-          class="text-blue-400 hover:underline">divyanshjuneja@stalwartintegrals.com</a>
+  <!-- Contact -->
+  <section id="contact" class="py-32 relative text-center">
+    <div class="max-w-3xl mx-auto px-6 reveal-text">
+      <h2 class="text-4xl font-bold mb-8 text-white">Let's Build the Future</h2>
+      <p class="text-gray-400 mb-10 text-lg">
+        Ready to integrate advanced intelligence into your ecosystem?
       </p>
+      <a href="mailto:divyanshjuneja@stalwartintegrals.com"
+        class="btn-primary inline-flex items-center px-8 py-4 rounded-full text-white font-medium hover-lift">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75">
+          </path>
+        </svg>
+        divyanshjuneja@stalwartintegrals.com
+      </a>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-black/50 py-10 text-center">
-    <p class="text-gray-500">© 2025 Stalwart Integrals. All rights reserved.</p>
+  <footer class="border-t border-white/5 py-12 text-center bg-black/20">
+    <div class="text-sm text-gray-500 font-light">
+      &copy; 2025 Stalwart Integrals. All rights reserved.
+    </div>
   </footer>
 
   <script>
-    // Mobile Menu Toggle
-    const menuToggle = document.getElementById('menuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    menuToggle.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
     });
 
-    // GSAP fromTo reveal
+    // Mobile Menu
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    btn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        nav.classList.add('shadow-lg');
+        nav.style.background = 'rgba(5, 5, 16, 0.9)';
+      } else {
+        nav.classList.remove('shadow-lg');
+        nav.style.background = 'rgba(5, 5, 16, 0.7)';
+      }
+    });
+
+    // Animations (GSAP)
     gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray('.reveal').forEach(el => {
+
+    // Initial load animation for Hero
+    gsap.fromTo(".animate-reveal",
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 1.5, ease: "power2.out", delay: 0.2 }
+    );
+
+    // Scroll reveal for sections
+    gsap.utils.toArray('.reveal-text').forEach(el => {
       gsap.fromTo(el,
-        { opacity: 0, y: 50 },
+        { opacity: 0, y: 30 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: 'power3.out',
+          opacity: 1, y: 0,
+          duration: 1,
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: el,
             start: 'top 85%',
-            toggleActions: 'play none none reset'
           }
         }
       );
     });
 
-    // Three.js Cosmic Background
+    gsap.utils.toArray('.reveal-card').forEach((el, index) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.8,
+          delay: index * 0.1, // Stagger effect
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 90%',
+          }
+        }
+      );
+    });
+
+    // Three.js Starfield Background
+    const canvas = document.getElementById('starfield');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('cosmicBackground').appendChild(renderer.domElement);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    const starGeometry = new THREE.BufferGeometry();
-    const starCount = 5000;
-    const positions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 2000;
+    // Stars
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 2000;
+    const posArray = new Float32Array(starsCount * 3);
+
+    for (let i = 0; i < starsCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 1500; // Spread stars wider
     }
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const starMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 2, transparent: true, opacity: 0.8 });
-    const stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
 
-    camera.position.z = 1000;
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    const starsMaterial = new THREE.PointsMaterial({
+      size: 2, // Slightly larger
+      color: 0x4cc9f0, // Nebula Cyan tint
+      transparent: true,
+      opacity: 0.6,
+      sizeAttenuation: true
+    });
+
+    const starsMesh = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starsMesh);
+
+    camera.position.z = 800;
+
+    // Mouse movement effect
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    const windowHalfX = window.innerWidth / 2;
+    const windowHalfY = window.innerHeight / 2;
+
+    document.addEventListener('mousemove', (event) => {
+      mouseX = (event.clientX - windowHalfX);
+      mouseY = (event.clientY - windowHalfY);
+    });
+
     function animate() {
       requestAnimationFrame(animate);
-      stars.rotation.y += 0.0002;
+
+      targetX = mouseX * 0.001;
+      targetY = mouseY * 0.001;
+
+      starsMesh.rotation.y += 0.0003; // Constant slow rotation
+      starsMesh.rotation.x += 0.0001;
+
+      // Parallax effect
+      starsMesh.rotation.y += 0.05 * (targetX - starsMesh.rotation.y);
+      starsMesh.rotation.x += 0.05 * (targetY - starsMesh.rotation.x);
+
       renderer.render(scene, camera);
     }
     animate();

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WOKMAT – AI Education Ecosystem</title>
+
+    <!-- Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        space: {
+                            900: '#050510',
+                            800: '#0a0a1a',
+                            700: '#151525',
+                        },
+                        nebula: {
+                            core: '#2563eb',   // Sapphire Blue
+                            light: '#06b6d4',  // Cyan
+                            accent: '#f59e0b', // Amber (for warmth/learning)
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+
+    <style>
+        body {
+            background-color: #050510;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050510;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-glass {
+            background: rgba(5, 5, 16, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* Text Effects */
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #60a5fa 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Interactive */
+        .hover-lift {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(6, 182, 212, 0.15);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        /* Section Divider */
+        .section-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-nebula-core selection:text-white">
+
+    <!-- Background Canvas -->
+    <canvas id="starfield" class="fixed top-0 left-0 w-full h-full -z-10 opacity-60"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold tracking-wider text-white">
+                        WOKMAT <span class="font-light text-nebula-light">AI</span>
+                    </span>
+                </a>
+
+                <!-- Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#upskilling"
+                        class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Individual
+                        Upskilling</a>
+                    <a href="#examination"
+                        class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Enterprise
+                        Exams</a>
+                    <a href="mailto:akshitnarwal@stalwartintegrals.com"
+                        class="px-5 py-2 rounded-full bg-nebula-core/10 border border-nebula-core/30 text-nebula-light text-sm font-bold hover:bg-nebula-core/20 transition-all">
+                        Get Access
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[80vh] flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Glow -->
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-nebula-core/10 rounded-full blur-[120px] -z-10 pointer-events-none">
+        </div>
+
+        <div class="max-w-5xl mx-auto px-6 text-center z-10 animate-reveal">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
+                The Future of <br>
+                <span class="text-gradient-blue">Adaptive Learning</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+                An integrated AI ecosystem designed to assess, empower, and certify talent. From personalized coaching
+                to secure institutional examinations.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="#upskilling"
+                    class="group relative px-8 py-4 bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-nebula-light/50 transition-all w-64 text-left">
+                    <div class="text-xs font-bold text-nebula-light uppercase tracking-wider mb-1">For Individuals</div>
+                    <div class="text-xl font-semibold text-white group-hover:text-nebula-light transition-colors">
+                        Upskilling Agent &rarr;</div>
+                    <div
+                        class="absolute -bottom-4 -right-4 w-20 h-20 bg-nebula-light/10 rounded-full blur-xl group-hover:bg-nebula-light/20 transition-all">
+                    </div>
+                </a>
+
+                <a href="#examination"
+                    class="group relative px-8 py-4 bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-nebula-core/50 transition-all w-64 text-left">
+                    <div class="text-xs font-bold text-nebula-core uppercase tracking-wider mb-1">For Universities</div>
+                    <div class="text-xl font-semibold text-white group-hover:text-nebula-core transition-colors">Exam
+                        Platform &rarr;</div>
+                    <div
+                        class="absolute -bottom-4 -right-4 w-20 h-20 bg-nebula-core/10 rounded-full blur-xl group-hover:bg-nebula-core/20 transition-all">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product 1: Upskilling (Individuals) -->
+    <section id="upskilling" class="py-24 relative bg-space-800/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center gap-16">
+
+                <!-- Content -->
+                <div class="md:w-1/2 reveal-left">
+                    <div
+                        class="inline-block px-3 py-1 rounded-full bg-nebula-light/10 text-nebula-light text-xs font-bold uppercase tracking-wider mb-6">
+                        For Students & Professionals
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        AI Interview <br> Upskilling Platform
+                    </h2>
+                    <p class="text-lg text-gray-400 mb-8 leading-relaxed">
+                        Master your career path with an intelligent coach that evolves with you. Take personalized
+                        practice interviews and receive instant, granular feedback to refine your communication and
+                        technical skills.
+                    </p>
+
+                    <ul class="space-y-6">
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-lg bg-nebula-light/10 flex items-center justify-center text-nebula-light mt-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-xl font-semibold text-white">AI Mock Interviews</h3>
+                                <p class="text-sm text-gray-400 mt-1">Simulate real-world scenarios with adaptive AI
+                                    agents. Get instant feedback on tone, confidence, and accuracy.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-lg bg-nebula-light/10 flex items-center justify-center text-nebula-light mt-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-xl font-semibold text-white">Interactive Knowledge Graphs</h3>
+                                <p class="text-sm text-gray-400 mt-1">Visualize complex topics dynamically. Explore
+                                    connections between concepts with AI-enabled navigation.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 rounded-lg bg-nebula-light/10 flex items-center justify-center text-nebula-light mt-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-xl font-semibold text-white">Personalized Learning</h3>
+                                <p class="text-sm text-gray-400 mt-1">A tailored learning journey that identifies your
+                                    strengths and targets your weaknesses automatically.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Visual/Graphic Area -->
+                <div class="md:w-1/2 reveal-right">
+                    <div
+                        class="glass-panel p-6 rounded-3xl border border-nebula-light/20 relative overflow-hidden h-[500px] flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 to-transparent"></div>
+                        <!-- Abstract Representation of User Growth -->
+                        <div class="animate-float">
+                            <svg class="w-48 h-48 text-nebula-light/80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5"
+                                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="absolute bottom-10 left-10 right-10">
+                            <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
+                                <div
+                                    class="h-full bg-nebula-light rounded-full w-[75%] shadow-[0_0_10px_rgba(6,182,212,0.5)]">
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-400 font-mono">
+                                <span>Skill Proficiency</span>
+                                <span class="text-nebula-light">75%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Product 2: Examination (Universities) -->
+    <section id="examination" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row-reverse items-center gap-16">
+
+                <!-- Content -->
+                <div class="md:w-1/2 reveal-right">
+                    <div
+                        class="inline-block px-3 py-1 rounded-full bg-nebula-core/10 text-nebula-core text-xs font-bold uppercase tracking-wider mb-6">
+                        For Universities
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        AI Examination <br> Platform
+                    </h2>
+                    <p class="text-lg text-gray-400 mb-8 leading-relaxed">
+                        Empower your institution with a secure, limitless digital examination environment. Administer
+                        objective, subjective, or coding exams with automated proctoring and rapid AI grading.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="glass-panel p-5 rounded-2xl hover:border-nebula-core/40 transition-colors">
+                            <h3 class="text-lg font-bold text-white mb-2">Secure Proctoring</h3>
+                            <p class="text-sm text-gray-400">Live monitoring and AI-driven anti-cheating protocols
+                                ensure integrity.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl hover:border-nebula-core/40 transition-colors">
+                            <h3 class="text-lg font-bold text-white mb-2">24h Auto-Grading</h3>
+                            <p class="text-sm text-gray-400">Objective, subjective, and coding answers graded by AI
+                                within 24 hours.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl hover:border-nebula-core/40 transition-colors">
+                            <h3 class="text-lg font-bold text-white mb-2">Admin Console</h3>
+                            <p class="text-sm text-gray-400">Full control for administration to manage exams, students,
+                                and results.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl hover:border-nebula-core/40 transition-colors">
+                            <h3 class="text-lg font-bold text-white mb-2">Deep Analytics</h3>
+                            <p class="text-sm text-gray-400">Custom tailored reports to improve academic program
+                                insights.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual/Graphic Area -->
+                <div class="md:w-1/2 reveal-left">
+                    <div
+                        class="glass-panel p-6 rounded-3xl border border-nebula-core/20 relative overflow-hidden h-[500px] flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-tl from-blue-600/10 to-transparent"></div>
+                        <!-- Abstract Representation of Secure Exam -->
+                        <div class="animate-pulse-slow">
+                            <svg class="w-48 h-48 text-nebula-core/80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5"
+                                    d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z">
+                                </path>
+                            </svg>
+                        </div>
+
+                        <div class="absolute top-10 right-10">
+                            <div class="flex items-center space-x-2">
+                                <span class="relative flex h-3 w-3">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                </span>
+                                <span class="text-xs text-green-400 font-mono uppercase tracking-widest">System
+                                    Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 text-center relative z-10">
+        <div class="max-w-3xl mx-auto px-6 reveal">
+            <h2 class="text-3xl font-bold mb-8 text-white">Transform Your Learning Infrastructure</h2>
+            <a href="mailto:akshitnarwal@stalwartintegrals.com"
+                class="inline-flex items-center px-10 py-5 rounded-full bg-gradient-to-r from-nebula-core to-nebula-light text-white font-bold tracking-wide hover:shadow-lg hover:shadow-nebula-light/30 transition-all transform hover:-translate-y-1">
+                Request Demo Access
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 text-center bg-black/20">
+        <div class="text-sm text-gray-500 font-light">
+            &copy; 2025 Wokmat (Part of Stalwart Integrals). All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // GSAP Reveal
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.fromTo(".animate-reveal",
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 1.5, ease: "power2.out", delay: 0.2 }
+        );
+
+        const revealConfigs = [
+            { selector: '.reveal-left', x: -50 },
+            { selector: '.reveal-right', x: 50 },
+            { selector: '.reveal', x: 0, y: 50 }
+        ];
+
+        revealConfigs.forEach(config => {
+            gsap.utils.toArray(config.selector).forEach(el => {
+                gsap.fromTo(el,
+                    { opacity: 0, x: config.x || 0, y: config.y || 0 },
+                    {
+                        opacity: 1, x: 0, y: 0,
+                        duration: 1,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: el,
+                            start: 'top 85%',
+                        }
+                    }
+                );
+            });
+        });
+
+        // Three.js Starfield (Consistent with Main Site)
+        const canvas = document.getElementById('starfield');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 2500;
+        const posArray = new Float32Array(starsCount * 3);
+
+        for (let i = 0; i < starsCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 1500;
+        }
+
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        // Wokmat Tint (Cyan/Sapphire)
+        const starsMaterial = new THREE.PointsMaterial({
+            size: 2,
+            color: 0x06b6d4,
+            transparent: true,
+            opacity: 0.6,
+            sizeAttenuation: true
+        });
+
+        const starsMesh = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starsMesh);
+
+        camera.position.z = 800;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            starsMesh.rotation.y += 0.0003;
+            starsMesh.rotation.x -= 0.0001; // Slight diff direction
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
